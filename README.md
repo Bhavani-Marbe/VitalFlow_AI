@@ -18,7 +18,7 @@ django-cors-headers
 
 ⚙️ Installation & Setup
 1. Clone the repository
-git clone https://github.com/your-username/vitalflow-ai.git
+git clone[ https://github.com/your-username/vitalflow-ai.git](https://github.com/Bhavani-Marbe/VitalFlow_AI.git)
 cd vitalflow-ai
 2. Create virtual environment
 python -m venv venv

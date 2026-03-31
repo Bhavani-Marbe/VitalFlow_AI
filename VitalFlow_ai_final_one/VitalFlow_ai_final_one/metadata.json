@@ -1,0 +1,7 @@
+{
+  "name": "Remix: Remix: VitalFlow Healthcare AI",
+  "description": "Production bio-grid management system with real-time AI inventory matching and clinical assistant nodes.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

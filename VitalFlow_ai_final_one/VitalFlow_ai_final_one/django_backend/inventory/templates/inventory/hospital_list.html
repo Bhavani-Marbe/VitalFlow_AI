@@ -1,0 +1,124 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Hospital Management{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Registered Hospitals</h5>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addHospitalModal">
+            <i class="bi bi-plus-lg"></i> Register Hospital
+        </button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Hospital Name</th>
+                        <th>City</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>Admin User</th>
+                        <th>Requests</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hospital in hospitals %}
+                    <tr>
+                        <td><strong>{{ hospital.name }}</strong></td>
+                        <td>{{ hospital.city }}</td>
+                        <td>{{ hospital.contact_number }}</td>
+                        <td>{{ hospital.email }}</td>
+                        <td>
+                            {% if hospital.admin_user %}
+                            <span class="badge bg-secondary">{{ hospital.admin_user.username }}</span>
+                            {% else %}
+                            <span class="text-muted small">No Admin</span>
+                            {% endif %}
+                        </td>
+                        <td>
+    {% if hospital.admin_user %}
+        <span class="badge bg-info text-dark">{{ hospital.admin_user.blood_requests.count }}</span>
+    {% else %}
+        <span class="badge bg-secondary">0</span>
+    {% endif %}
+</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-info" title="History"><i class="bi bi-clock-history"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">No hospitals registered</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Hospital Modal -->
+<div class="modal fade" id="addHospitalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Register New Hospital</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'raider_hospital_add' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Hospital Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="2" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" name="contact_number" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Admin User (Optional)</label>
+                        <select name="admin_user" class="form-select">
+                            <option value="">Select User</option>
+                            {% for user in hosp_admin_users %}
+                            <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+.table-hover tbody tr:hover{
+background:#f8f9fa;
+transition:0.2s;
+}
+</style>

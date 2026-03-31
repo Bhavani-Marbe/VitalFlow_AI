@@ -1,0 +1,302 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Admin Dashboard - Overview{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- KPI Cards Section -->
+    <div class="row mb-4">
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card card-metric shadow-sm border-left-danger">
+                <div class="card-body">
+                    <div class="text-danger small text-uppercase mb-1">Total Blood Units</div>
+                    <div class="h3 mb-0">
+                        <strong>{{ total_units }}</strong>
+                        <small class="text-muted">units in stock</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card card-metric shadow-sm border-left-warning">
+                <div class="card-body">
+                    <div class="text-warning small text-uppercase mb-1">Pending Requests</div>
+                    <div class="h3 mb-0">
+                        <strong>{{ pending_requests_count }}</strong>
+                        <small class="text-muted">awaiting approval</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card card-metric shadow-sm border-left-success">
+                <div class="card-body">
+                    <div class="text-success small text-uppercase mb-1">Fulfilled Today</div>
+                    <div class="h3 mb-0">
+                        <strong>{{ fulfilled_today_count }}</strong>
+                        <small class="text-muted">requests delivered</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card card-metric shadow-sm border-left-danger">
+                <div class="card-body">
+                    <div class="text-danger small text-uppercase mb-1">Critical Alerts</div>
+                    <div class="h3 mb-0">
+                        <strong>{{ critical_alerts_count }}</strong>
+                        <small class="text-muted">low stock items</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Secondary Stats -->
+    <div class="row mb-4">
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-info small text-uppercase mb-1">In Transit</div>
+                    <div class="h3 mb-0"><strong>{{ in_transit_count }}</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-warning small text-uppercase mb-1">Expiring Soon</div>
+                    <div class="h3 mb-0"><strong>{{ expiring_soon_count }}</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-secondary small text-uppercase mb-1">Total Hospitals</div>
+                    <div class="h3 mb-0"><strong>{{ total_hospitals }}</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card shadow-sm border-left-danger">
+                <div class="card-body">
+                    <div class="text-danger small text-uppercase mb-1">Critical Stock Hospitals</div>
+                    <div class="h3 mb-0"><strong>{{ hospitals_with_critical_stock }}</strong></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Blood Type Distribution -->
+    <div class="row">
+
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-white d-flex justify-content-between">
+                    <h5 class="mb-0">Blood Type Stock Distribution</h5>
+                    <span class="badge bg-secondary">Real-time Data</span>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row text-center">
+
+                        {% for bg, units in inventory_by_type.items %}
+
+                        <div class="col-md-3 mb-3">
+
+                            <div class="p-3 border rounded">
+
+                                <h6 class="text-danger"><strong>{{ bg }}</strong></h6>
+
+                                <h3 class="mb-0">{{ units }}</h3>
+
+                                <small class="text-muted">units</small>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- System Status -->
+        <div class="col-lg-4 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">System Status</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <ul class="list-unstyled">
+
+                        <li class="mb-3 pb-3 border-bottom">
+                            <small class="text-muted">Active Requests</small>
+                            <h5 class="text-info mb-0">
+                                {{ pending_requests_count|add:in_transit_count }}
+                            </h5>
+                        </li>
+
+                        <li class="mb-3 pb-3 border-bottom">
+                            <small class="text-danger">CRITICAL ALERT</small>
+                            <h5 class="text-danger mb-0">{{ critical_alerts_count }} items</h5>
+                            <small>Stock below threshold</small>
+                        </li>
+
+                        <li>
+                            <small class="text-warning">EXPIRY WARNING</small>
+                            <h5 class="text-warning mb-0">{{ expiring_soon_count }} items</h5>
+                            <small>Expiring within 7 days</small>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent Requests -->
+    <div class="row">
+
+        <div class="col-lg-8 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-white d-flex justify-content-between">
+                    <h5 class="mb-0">Recent Blood Requests</h5>
+                    <a href="{% url 'raider_requests' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Hospital</th>
+                                <th>Blood Type</th>
+                                <th>Units</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for req in recent_requests %}
+
+                        <tr>
+
+                            <td><code class="text-danger">{{ req.request_id }}</code></td>
+
+                            <td>{{ req.item.facility_name }}</td>
+
+                            <td><strong>{{ req.item.blood_group }}</strong></td>
+
+                            <td>{{ req.units }}</td>
+
+                            <td>
+                                <span class="badge bg-secondary">{{ req.status }}</span>
+                            </td>
+
+                            <td>
+                                <small>{{ req.timestamp|date:"M d, H:i" }}</small>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No recent requests
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Top Hospitals -->
+        <div class="col-lg-4 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-white d-flex justify-content-between">
+                    <h5 class="mb-0">Top Hospitals</h5>
+                    <a href="{% url 'raider_hospitals' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+
+                <div class="list-group list-group-flush">
+
+                    {% for hospital in top_hospitals %}
+
+                    <div class="list-group-item d-flex justify-content-between">
+
+                        <div>
+                            <h6 class="mb-0">{{ hospital.name }}</h6>
+                            <small class="text-muted">{{ hospital.city }}</small>
+                        </div>
+
+                        <span class="badge bg-danger">{{ hospital.request_count }}</span>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="p-3 text-center text-muted">
+                        No hospital data available
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
